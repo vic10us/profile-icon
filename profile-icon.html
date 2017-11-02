@@ -1,0 +1,211 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="profile-icon">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        --profile-image-size0: var(--profile-image-size, 96px);
+        --profile-background-color0: var(--profile-background-color, #424242);
+        --profile-font-color0: var(--profile-font-color, #fefefe);
+        --profile-image-url0: var(--profile-image-url, url(''));
+      }
+      .gb_zb {
+          -webkit-border-radius: 50%;
+          border-radius: 50%;
+          overflow: hidden;
+          -webkit-transform: translateZ(0);
+          transform: translateZ(0);
+      }
+
+      .gb_xb {
+          position: relative;
+      }
+
+      .gb_xb, .gb_yb {
+          background-color: var(--profile-background-color0);
+          display: inline-block;
+          vertical-align: top;
+      }
+
+      .gbip {
+        background-image: var(--profile-image-url0);
+      }
+
+      .gb_Ab {
+          height: var(--profile-image-size0);
+          width: var(--profile-image-size0);
+          -webkit-background-size: var(--profile-image-size0) var(--profile-image-size0);
+          background-size: var(--profile-image-size0) var(--profile-image-size0);
+          background-color: transparent;
+          border: none;
+          vertical-align: top;
+      }
+
+      .initials {
+        position: fixed;
+        height: var(--profile-image-size0);
+        width: var(--profile-image-size0);
+        text-align: center;
+        vertical-align: middle;
+        line-height: var(--profile-image-size0);
+        font-size: calc(var(--profile-image-size0) / 2);
+        z-index: -1;
+        font-weight: 700;
+        color: var(--profile-font-color0);
+      }
+
+      .gb_zb .gb_mb {
+          background: rgba(0,0,0,.54);
+      }
+
+      .gb_mb {
+          background: rgba(78,144,254,.7);
+          bottom: 0;
+          color: #fff;
+          font-size: calc(var(--profile-image-size0) * 0.09375);
+          font-weight: bold;
+          left: 0;
+          line-height: calc(var(--profile-image-size0) * 0.09375);
+          position: absolute;
+          padding: calc(var(--profile-image-size0)* 0.0729166666666667) 0;
+          text-align: center;
+          width: var(--profile-image-size0);
+      }
+
+    </style>
+    <a class="gb_xb gb_Mf gb_zb" aria-label="Change profile picture." href$="[[link]]" target="_blank">
+      <div class="initials">[[initials]]</div>
+      <div class="gb_Ab gbip" title="Profile"></div>
+      <span hidden$="[[!hasLink]]" class="gb_mb">Change</span>
+    </a>
+  </template>
+
+  <script>
+    /**
+     * `profile-icon`
+     * Google-like profile icon with user initials backup.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class ProfileIcon extends Polymer.Element {
+      static get is() { return 'profile-icon'; }
+      static get properties() {
+        return {
+          link: {
+            type: String
+          },
+          raised: {
+            type: Boolean,
+            value: true,
+            reflectToAttribute: true
+          },
+          initials: {
+            type: String,
+            computed: '_getInitials(username)'
+          },
+          username: {
+            type: String,
+            value: '',
+            observer: '_nameChanged'
+          },
+          profileImage: {
+            type: String,
+            observer: '_profileImageChanged'
+          },
+          size: {
+            type: String,
+            value: '96px',
+            observer: '_sizeChanged'
+          },
+          hasLink: {
+            type: Boolean,
+            value: false,
+            computed: '_hasLink(link)'
+          },
+          colors: {
+            type: Array,
+            value: function() {
+              return [
+                "#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#e67e22", "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", 
+                "#f1c40f", "#34495e", "#e74c3c", "#ecf0f1", "#95a5a6", "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"
+              ];
+            }
+          },
+          color: {
+            type: String,
+            computed: '_getProfileColor(initials)'
+          }
+        };
+      }
+
+      _getInitials(name) {
+        if (name == undefined || name.trim() === '') return '--';
+        var names = name.split(/[\s-]+/);
+        var initials = name.substring(0,2).toUpperCase();
+        if (names.length > 1) {
+          initials = (names[0].substring(0,1) + names[names.length-1].substring(0,1)).toUpperCase();
+        }
+        return initials;
+      }
+
+      _getProfileColor(initials) {
+          let charIndex = (initials == '?' ? 72 : initials.charCodeAt(0)) - 64;
+          let colorIndex = charIndex % this.colors.length;
+          return this.colors[colorIndex];
+      }
+
+      _highlightColor(bgColor, lightColor, darkColor) {
+        if (bgColor === undefined || lightColor === undefined || darkColor === undefined) {
+            return '#000000';
+        }
+        var color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
+        var r = parseInt(color.substring(0, 2), 16); // hexToR
+        var g = parseInt(color.substring(2, 4), 16); // hexToG
+        var b = parseInt(color.substring(4, 6), 16); // hexToB
+        var uicolors = [r / 255, g / 255, b / 255];
+        var c = uicolors.map((col) => {
+            if (col <= 0.03928) {
+            return col / 12.92;
+            }
+            return Math.pow((col + 0.055) / 1.055, 2.4);
+        });
+        var L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
+        var result = (L > 0.179) ? darkColor : lightColor;
+        return result;
+      }
+
+      _nameChanged(newValue, oldValue) {
+        var color = this._getProfileColor(this.initials);
+        this.updateStyles(
+            { '--profile-background-color0': color }
+        );
+        this.updateStyles(
+            { '--profile-font-color0': this._highlightColor(color, '#ffffff', '#000000') }
+        );
+      }
+
+      _profileImageChanged(newValue, oldValue) {
+        console.log(`Old: ${oldValue}, New: ${newValue}`);
+        if (newValue !== undefined) {
+          this.updateStyles({ '--profile-image-url0': `url(${newValue}` });
+        }
+      }
+
+      _sizeChanged(newValue, oldValue) {
+        if (newValue !== undefined && newValue !== null) {
+          this.updateStyles({ '--profile-image-size0': newValue });
+        }
+      }
+
+      _hasLink(link) {
+        console.log(link);
+        return (link !== undefined && link !== null && link.trim() !== '');
+      }
+    }
+
+    window.customElements.define(ProfileIcon.is, ProfileIcon);
+  </script>
+</dom-module>

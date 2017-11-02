@@ -1,0 +1,29 @@
+{
+  "name": "profile-icon",
+  "version": "2.0.0",
+  "authors": [
+    "Keith Hill <keith@dexs.ca>"
+  ],
+  "description": "Google-like profile icon with user initials backup.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed",
+    "profile",
+    "icon"
+  ],
+  "main": "profile-icon.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://www.webcomponents.org/element/vic10us/profile-icon",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0"
+  },
+  "devDependencies": {
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0"
+  }
+}
