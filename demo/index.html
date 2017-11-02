@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>profile-icon demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../profile-icon.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic profile-icon demo</h3>
+      <demo-snippet>
+        <template>
+          <profile-icon link="https://plus.google.com/u/0/me?tab=xM&authuser=0" size="96px" username="Jean-Francois Biggiton" profile-image="./blank-profile-picture-973460_960_720.png"></profile-icon>
+          <profile-icon size="64px" username="Keith Hill" profile-image="./blank-profile-picture-973460_960_720.png"></profile-icon>
+          <profile-icon size="48px" username="John Doe"></profile-icon>
+          <profile-icon size="128px" username="Neo Doe"></profile-icon>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>
